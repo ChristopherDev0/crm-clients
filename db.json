@@ -1,0 +1,24 @@
+{
+  "clientes": [
+    {
+      "nombre": "camaron",
+      "apellido": "lastnamegatito",
+      "email": "hola@gamail.com",
+      "telefono": "123-123-1232",
+      "empresa": "twelve",
+      "puesto": "any",
+      "estado": true,
+      "id": 1
+    },
+    {
+      "nombre": "Gatito",
+      "apellido": "Bechtelar",
+      "email": "hola@gamail.com",
+      "telefono": "123-123-1232",
+      "empresa": "twelve",
+      "puesto": "any",
+      "estado": true,
+      "id": 3
+    }
+  ]
+}

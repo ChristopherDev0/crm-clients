@@ -1,10 +1,25 @@
 <script setup>
+import { onMounted, reactive } from 'vue';
 import { FormKit } from '@formkit/vue'
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import RouterLinkVue from '../components/UI/RouterLink.vue';
 import HeadingVue from '../components/UI/Heading.vue';
 import ClienteService from '../services/ClienteService';
+
 const router = useRouter()
+const route = useRoute()
+
+const {id} = route.params
+
+const formData = reactive({})
+
+onMounted(() => {
+    ClienteService.obtenerCliente(id)
+        .then(({data}) => {
+            Object.assign(formData, data)
+        })
+        .catch(error => console.log(error))
+})
 
 defineProps({
     titulo: {
@@ -13,13 +28,9 @@ defineProps({
 })
 
 const handleSubmit = (data) => {
-    data.estado = 1
-   ClienteService.agregarCliente(data)
-    .then(respuesta => {
-        //redireccionar 
-        router.push({name: 'inicio'})
-    })
-    .catch(error => console.log(error))
+   ClienteService.actualizarCliente(id, data)
+        .then(() => router.push({name: 'inicio'}))
+        .catch(error => console.log(error))
 }
 
 </script>
@@ -37,7 +48,7 @@ const handleSubmit = (data) => {
 
         <div class="mx-auto mt-10 bg-white shadow-lg rounded-lg">
             <div class="mx-auto md:w-1/2 py-20 px-6">
-                <FormKit @submit="handleSubmit" type="form" :actions="false" incomplete-message="No se puedo enviar, resisa los mensajes">
+                <FormKit :value="formData" @submit="handleSubmit" type="form" :actions="false" incomplete-message="No se puedo enviar, resisa los mensajes">
                     <FormKit 
                         type="text" 
                         label="Nombre"
@@ -45,6 +56,7 @@ const handleSubmit = (data) => {
                         placeholder="Nombre del cliente"
                         validation="required"
                         :validation-messages="{ required: 'El campo nombre es obligatorio'}"
+                        v-model="formData.nombre"
                         >
                     </FormKit>
                     <FormKit 
@@ -54,6 +66,7 @@ const handleSubmit = (data) => {
                         placeholder="Apellido del cliente"
                         validation="required"
                         :validation-messages="{ required: 'El campo apellido es obligatorio'}"
+                        v-model="formData.apellido"
                         >
                     </FormKit>
                     <FormKit 
@@ -63,6 +76,7 @@ const handleSubmit = (data) => {
                         placeholder="E-mail del cliente"
                         validation="required|email"
                         :validation-messages="{ required: 'El campo E-mail es obligatorio'}"
+                        v-model="formData.email"
                         >
                     </FormKit>
                     <FormKit 
@@ -72,6 +86,7 @@ const handleSubmit = (data) => {
                         placeholder="Telefono: xxx-xxx-xxxx"
                         validation="*matches:/^[0-9]{3}-[0-9]{3}-[0-9]{4}$/"
                         :validation-messages="{ matches: 'El campo Telefono es obligatorio'}"
+                        v-model="formData.telefono"
                         >
                     </FormKit>
                      <FormKit 
@@ -79,18 +94,20 @@ const handleSubmit = (data) => {
                         label="Empresa" 
                         name="empresa"
                         placeholder="Empresa del cliente"
-                    >
+                        v-model="formData.empresa"
+                        >
                     </FormKit>
                     <FormKit 
                         type="text" 
                         label="Puesto"
                         name="puesto" 
                         placeholder="Puesto del cliente"
-                    >
+                        v-model="formData.puesto"
+                        >
                     </FormKit>
                     <FormKit 
                         type="submit" 
-                        label="Agregar cliente" 
+                        label="Guardar cambios del cliente" 
                     >
                     </FormKit>
                 </FormKit>
